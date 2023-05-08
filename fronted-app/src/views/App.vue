@@ -1,0 +1,117 @@
+<template>
+  <div>
+    <nav class="navbar navbar-expand-sm bg-black text-white ">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img
+            src="https://www.pngkey.com/png/detail/194-1941157_39kib-600x551-navi-serial-experiments-lain-navi-png.png"
+            alt="39kib, 600x551, Navi - Serial Experiments Lain Navi Png@pngkey.com" width="40" height="40"
+            class="d-inline-block align-top">
+        </a>
+        <button class="navbar-toggler text-white" type="button" data-toggle="collapse" data-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ">
+            <li class="nav-item">
+              <router-link class="nav-link text-decoration-none  text-white" to="/">Home</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="btn btn-light " to="/login" v-if="!isAuthenticated">Login</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link text-decoration-none  text-white" to="/dashboard"
+                v-if="isAuthenticated">Dashboard</router-link>
+            </li>
+            <li class="nav-item">
+
+              <button class="btn btn-light" @click="logout" v-if="isAuthenticated">Logout</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <router-view />
+  </div>
+</template>
+
+<script>
+import { createRouter, createWebHistory } from 'vue-router'
+import { userService } from '@/services/user.service'
+
+export default {
+  computed: {
+    isAuthenticated() {
+      return localStorage.getItem('session_token') !== null
+    }
+  },
+  methods: {
+    logout() {
+      userService.logout()
+        .then(() => {
+          localStorage.removeItem('session_token')
+          this.$router.push('/login')
+          location.reload()
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  },
+  mounted() {
+    this.$router = createRouter({
+      history: createWebHistory(),
+      routes: []
+    })
+  }
+  
+}
+// This is an even listetener that togles the nav bar
+document.addEventListener("DOMContentLoaded", function() {
+    var navbarToggler = document.querySelector(".navbar-toggler");
+    var navbarCollapse = document.querySelector(".navbar-collapse");
+
+    navbarToggler.addEventListener("click", function() {
+        if (navbarCollapse.style.display === "block") {
+            navbarCollapse.style.display = "none";
+        } else {
+            navbarCollapse.style.display = "block";
+        }
+    });
+  });
+</script>
+
+<style>
+/* Centers the navigation links and buttons on the top of the screen. */
+/* Centers the logo/icon and the links and buttons in the navbar. */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+ /* Fills the toggler icon background with white, making it visible. */
+.navbar-toggler-icon {
+  background-color: white;
+}
+/* Changes the size of the nav bar. */
+@media screen and (max-width: 991px) {
+  .navbar-nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .navbar-nav .nav-item {
+    margin-bottom: 10px;
+  }
+
+  .navbar-brand {
+    margin-bottom: 20px;
+  }
+}
+</style>
